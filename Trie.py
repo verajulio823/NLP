@@ -1,5 +1,6 @@
 from typing import Tuple
-
+from scipy.sparse import csr_matrix
+import numpy as np
 
 class TrieNode(object):
     """
@@ -13,7 +14,17 @@ class TrieNode(object):
         self.word_finished = False
         # How many times this character appeared in the addition process
         self.counter = 1
+        self.indexTF = 0
+        self.countDocument =0
+        self.IDF = 0.0
+        self.indexTFIDF = 0
     
+class MyTrie:
+
+    def __init__(self):
+        self.sparseMatrixTF = []
+        self.sparseMatrixTFIDF = []
+
 
 def add(root, word: str):
     """
@@ -39,7 +50,30 @@ def add(root, word: str):
             # And then point node to the new child
             node = new_node
     # Everything finished. Mark it as the end of a word.
+    node.countDocument= node.countDocument+1
     node.word_finished = True
+
+
+
+
+def find_word(root, word: str) -> Tuple[bool, int]:
+
+    node = root
+    if not root.children:
+        return False, 0
+    for char in word:
+        char_not_found = True
+        for child in node.children:
+            if child.char == char:
+                char_not_found = False
+                node = child
+                break
+        if char_not_found:
+            return False, 0
+    if node.word_finished:
+        return True, node.countDocument
+    return False, node.countDocument
+    
 
 
 def find_prefix(root, prefix: str) -> Tuple[bool, int]:
@@ -71,13 +105,3 @@ def find_prefix(root, prefix: str) -> Tuple[bool, int]:
     # prefix
     return True, node.counter
 
-if __name__ == "__main__":
-    root = TrieNode('*')
-    add(root, "hackathon")
-    add(root, 'hack')
-
-    print(find_prefix(root, 'hac'))
-    print(find_prefix(root, 'hack'))
-    print(find_prefix(root, 'hackathon'))
-    print(find_prefix(root, 'ha'))
-    print(find_prefix(root, 'hammer'))
