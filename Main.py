@@ -50,12 +50,13 @@ for i in range(0,4):
   for word in listUniqueWords:
      # print(word)
       #print(listWords.count(word), " ", word)
-      Trie.add(root,word)
-      td, tf = calculateTF(word, listWords)
-      nodeTF = {"ndoc":page_id,"td": td, "TF": tf}
-      print("word: ", word, " ",nodeTF)
+      Trie.add2(root,page_id,word, listWords)
+      #td, tf = calculateTF(word, listWords)
+      #nodeTF = {"ndoc":page_id,"td": td, "TF": tf}
+      #print("word: ", word, " ",nodeTF)
   #print(listWords[0])
   #Trie.add()
-print(Trie.find_word(root, 'air'))
+isFinish, node=  Trie.find_word(root, 'air')
+print(node)
 
 
