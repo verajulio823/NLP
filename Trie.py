@@ -36,6 +36,31 @@ class MyTrie:
         self.sparseMatrixTF = []
         self.sparseMatrixTFIDF = []
 
+class NodeTF:
+    def __init__(self, ndoc: int, td: int, TF : float):
+        #{"ndoc":page_id,"td": td_c, "TF": tf_c}
+        self.ndoc = ndoc
+        self.td = td
+        self.TF = TF
+
+    def __repr__(self) -> str:
+        return "NodeTF ( %s, %s, %s)" %(self.ndoc, self.td, self.TF)
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
+
+class NodeTFIDF:
+    def __init__(self, ndoc: int, tfidf: float ):
+        self.ndoc = ndoc
+        self.tfidf = tfidf
+          #tfidf= {"ndoc":ctf.ndoc,"tfidf": ctf.TF*child.IDF}
+    def __repr__(self) -> str:
+        return "NodeTFIDF ( %s, %s)" %(self.ndoc, self.tfidf)
+
+    def __hash__(self):
+        return hash(self.__repr__())
+
 
 def add(root, word: str):
     """
@@ -101,10 +126,10 @@ def add2(root, page_id:int, word: str, listWords: list):
     node.word_finished = True
 
     td_c, tf_c = calculateTF(word, listWords)
-    nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
-    #print("word: ", word, " ",nodeTF)
-    #node.TF.append(nodeTF)
-    appendTFdisk(word, node.TF, nodeTF)
+    nodetf = NodeTF(page_id, td_c, tf_c)
+    #nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
+    node.TF.append(nodetf)
+    #appendTFdisk(word, node.TF, nodetf)
 
 
 def appendTFdisk(word, listNodeTF, nodeTF):    
@@ -164,7 +189,7 @@ def dfsTrie(node:TrieNode, D: int) -> bool:
             
             for ctf in child.TF:
                 #print(ctf)
-                tfidf= {"ndoc":ctf["ndoc"],"tfidf": ctf["TF"]*child.IDF}
+                tfidf = NodeTFIDF(ctf.ndoc, ctf.TF*child.IDF)
                 child.TFIDF.append(tfidf)
 
             print("node: ", child)
@@ -173,21 +198,36 @@ def dfsTrie(node:TrieNode, D: int) -> bool:
             return True
     return False
 
-"""def serachMatching(listTFIDF: list) -> list:
-    for l in listTFIDF:
-       for doc in l.TFIDF:
-           doc["ndoc"]
-"""
-"""
-def serachQuery(root: TrieNode, query: str) -> str:
+def searchMatchin(listTFIDF: list) -> list:
+    listResult=[]
+    for i in range(len(listTFIDF)):
+       for j in range(len(listTFIDF[i])):
+            for i_c in range(len(listTFIDF)):
+                for j_c in range(len(listTFIDF[i_c])):
+                   if i!=i_c:
+                       if listTFIDF[i][j].ndoc ==listTFIDF[i_c][j_c].ndoc:
+                           listResult.append(listTFIDF[i][j])
+    for ltfidf in listTFIDF:
+        for n in range(0,2):
+            listResult.append(ltfidf[n])
 
-    listWords = query.split(",")
+    #print("Result: " ,listResult)
+    return list(set(listResult))
+
+
+
+def searchQuery(root: TrieNode, query: str) -> str:
+
+    listWords = query.split(" ")
     listTFIDF=[]
 
-    node = root    
-    if not root.children:
-        return ""
+   
+    
     for word in listWords:
+        node = root    
+        if not root.children:
+            return ""
+        #print(word)
         for char in word:
             char_not_found = True
             for child in node.children:
@@ -198,12 +238,12 @@ def serachQuery(root: TrieNode, query: str) -> str:
             if char_not_found:
                 return ""
         if node.word_finished:
+            #print("Encontrreee: ", node)
             listTFIDF.append(node.TFIDF)
             #return ""
-    searchMatchin(listTFIDF)
     
-    return ""
-"""
+    #print(listTFIDF)
+    return searchMatchin(listTFIDF)
 
 def find_prefix(root, prefix: str) -> Tuple[bool, int]:
     """

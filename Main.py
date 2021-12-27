@@ -38,7 +38,7 @@ root = TrieNode('*')
 myTrie = MyTrie()
 #myTrie.sparseMatrixTF.append({"ndoc":0,"td":1, "TF": 0.4})
 #print(myTrie.sparseMatrixTF[0])
-'''
+
 df = pd.read_csv('datasetTest.csv')
 
 for i in range(0,4):
@@ -58,8 +58,8 @@ for i in range(0,4):
       #print("word: ", word, " ",nodeTF)
   #print(listWords[0])
   #Trie.add()
-'''
 
+"""""
 general_path = "C:/Users/rjru/OneDrive/Documentos/wiki_proyect/"
 index_bd_file = pd.read_csv(general_path + "indice_test.csv") 
 for fn in index_bd_file["filename"]: # leemos el batch de documentos.
@@ -70,7 +70,7 @@ for fn in index_bd_file["filename"]: # leemos el batch de documentos.
       for word in listUniqueWords:
         Trie.add2(root, doc.page_id, word, ast.literal_eval(doc.Content))
     print("Fin Doc")
-
+"""
 
 isFinish, node=  Trie.find_word(root, 'air')
 #print(node)
@@ -78,4 +78,5 @@ isFinish, node=  Trie.find_word(root, 'sunny')
 #print(node)
 print("************************")
 print(Trie.dfsTrie(root, 4))
-#print(Trie.searchQuery(root, "island singapore"))
+print("************************")
+print(Trie.searchQuery(root, "island singapore"))
