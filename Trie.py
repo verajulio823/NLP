@@ -1,6 +1,7 @@
 from typing import Tuple
 from scipy.sparse import csr_matrix
 import numpy as np
+from math import log
 
 class TrieNode(object):
     """
@@ -22,7 +23,9 @@ class TrieNode(object):
         self.TFIDF =[]
 
     def __str__(self) -> str:
-        return "TrieNode\{ char:%s countDocument:%s TF:%s \}" % (self.char, self.countDocument, self.TF)
+        return "TrieNode\{ char: %s countDocument:%s TF:%s \nIDF: %s TFIDF: %s\}" % (self.char, self.countDocument, self.TF, self.IDF, self.TFIDF)
+
+    
     
 class MyTrie:
 
@@ -59,10 +62,13 @@ def add(root, word: str):
     node.word_finished = True
 
 
-def calculateTF(word, listWords: list) -> Tuple[int, float]:
+def calculateTF(word: str, listWords: list) -> Tuple[int, float]:
     t =listWords.count(word)
     tf = t/len(listWords)
     return t,tf
+
+def calculateIDF(D: int, countDocument: int)-> float:
+    return log(D/countDocument)
 
 def add2(root, page_id:int, word: str, listWords: list):
     """
@@ -93,8 +99,9 @@ def add2(root, page_id:int, word: str, listWords: list):
 
     td_c, tf_c = calculateTF(word, listWords)
     nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
-    print("word: ", word, " ",nodeTF)
+    #print("word: ", word, " ",nodeTF)
     node.TF.append(nodeTF)
+
 
 
 
@@ -119,7 +126,59 @@ def find_word(root, word: str) -> Tuple[bool, TrieNode]:
     
     return False, node
     
+def dfsTrie(node:TrieNode, D: int) -> bool:
+    
 
+   # if len(node.children) >1:
+   #     print("char: ", node.char)
+   #     return True
+    for child in node.children:
+        
+        if(child.word_finished):
+            child.IDF=calculateIDF(D, child.countDocument)            
+            
+            for ctf in child.TF:
+                #print(ctf)
+                tfidf= {"ndoc":ctf["ndoc"],"tfidf": ctf["TF"]*child.IDF}
+                child.TFIDF.append(tfidf)
+
+            print("node: ", child)
+
+        if dfsTrie(child, D):
+            return True
+    return False
+
+"""def serachMatching(listTFIDF: list) -> list:
+    for l in listTFIDF:
+       for doc in l.TFIDF:
+           doc["ndoc"]
+"""
+"""
+def serachQuery(root: TrieNode, query: str) -> str:
+
+    listWords = query.split(",")
+    listTFIDF=[]
+
+    node = root    
+    if not root.children:
+        return ""
+    for word in listWords:
+        for char in word:
+            char_not_found = True
+            for child in node.children:
+                if child.char == char:
+                    char_not_found = False
+                    node = child
+                    break
+            if char_not_found:
+                return ""
+        if node.word_finished:
+            listTFIDF.append(node.TFIDF)
+            #return ""
+    searchMatchin(listTFIDF)
+    
+    return ""
+"""
 
 def find_prefix(root, prefix: str) -> Tuple[bool, int]:
     """

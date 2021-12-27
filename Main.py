@@ -48,7 +48,7 @@ for i in range(0,4):
   listWords= document.split(",")
   listUniqueWords = list(set(listWords))
   for word in listUniqueWords:
-     # print(word)
+      #print(word)
       #print(listWords.count(word), " ", word)
       Trie.add2(root,page_id,word, listWords)
       #td, tf = calculateTF(word, listWords)
@@ -56,7 +56,11 @@ for i in range(0,4):
       #print("word: ", word, " ",nodeTF)
   #print(listWords[0])
   #Trie.add()
+
 isFinish, node=  Trie.find_word(root, 'air')
-print(node)
-
-
+#print(node)
+isFinish, node=  Trie.find_word(root, 'sunny')
+#print(node)
+print("************************")
+print(Trie.dfsTrie(root, 4))
+#print(Trie.searchQuery(root, "island singapore"))
