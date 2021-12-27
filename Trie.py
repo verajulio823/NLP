@@ -2,6 +2,9 @@ from typing import Tuple
 from scipy.sparse import csr_matrix
 import numpy as np
 from math import log
+import csv
+import os
+
 
 class TrieNode(object):
     """
@@ -100,7 +103,29 @@ def add2(root, page_id:int, word: str, listWords: list):
     td_c, tf_c = calculateTF(word, listWords)
     nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
     #print("word: ", word, " ",nodeTF)
-    node.TF.append(nodeTF)
+    #node.TF.append(nodeTF)
+    appendTFdisk(word, node.TF, nodeTF)
+
+
+def appendTFdisk(word, listNodeTF, nodeTF):    
+    listNodeTF.append(nodeTF)
+    path_node = "C:/Users/rjru/OneDrive/Documentos/GitHub/NLP/listindisk/"
+    if len(listNodeTF) > 10:
+        print("Procediendo a guardar...")
+        if os.path.exists(path_node + word + '.csv'):
+            f = open(path_node + word + '.csv', 'a')
+            writer = csv.writer(f)
+            for ntf in listNodeTF:
+                writer.writerow([str(ntf["ndoc"]), str(ntf["td"]), str(ntf["TF"])])
+            f.close()
+            listNodeTF = []
+        else:
+            f = open(path_node + word + '.csv', 'w')
+            writer = csv.writer(f)
+            for ntf in listNodeTF:
+                writer.writerow([str(ntf["ndoc"]), str(ntf["td"]), str(ntf["TF"])])
+            f.close()
+            listNodeTF = []
 
 
 
