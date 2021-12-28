@@ -95,6 +95,11 @@ def calculateTF(word: str, listWords: list) -> Tuple[int, float]:
     tf = t/len(listWords)
     return t,tf
 
+def calculateTF2(count: int, ndocs: int) -> Tuple[int, float]:
+    #t =listWords.count(word)
+    tf = count/ndocs
+    return count,tf
+
 def calculateIDF(D: int, countDocument: int)-> float:
     return log(D/countDocument)
 
@@ -128,6 +133,42 @@ def add2(root, page_id:int, word: str, listWords: list):
     td_c, tf_c = calculateTF(word, listWords)
     nodetf = NodeTF(page_id, td_c, tf_c)
     #nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
+    #print(nodetf)
+    node.TF.append(nodetf)
+    #appendTFdisk(word, node.TF, nodetf)
+
+
+def add3(root, page_id:int, word: str, count: int, ndocs: int):
+    """
+    Adding a word in the trie structure
+    """
+    node = root
+    for char in word:
+        found_in_child = False
+        # Search for the character in the children of the present `node`
+        for child in node.children:
+            if child.char == char:
+                # We found it, increase the counter by 1 to keep track that another
+                # word has it as well
+                child.counter += 1
+                # And point the node to the child that contains this char
+                node = child
+                found_in_child = True
+                break
+        # We did not find it so add a new chlid
+        if not found_in_child:
+            new_node = TrieNode(char)
+            node.children.append(new_node)
+            # And then point node to the new child
+            node = new_node
+    # Everything finished. Mark it as the end of a word.
+    node.countDocument= node.countDocument+1
+    node.word_finished = True
+
+    td_c, tf_c = calculateTF2(count, ndocs)
+    nodetf = NodeTF(page_id, td_c, tf_c)
+    #nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
+    #print(nodetf)
     node.TF.append(nodetf)
     #appendTFdisk(word, node.TF, nodetf)
 
@@ -178,7 +219,7 @@ def find_word(root, word: str) -> Tuple[bool, TrieNode]:
     
 def dfsTrie(node:TrieNode, D: int) -> bool:
     
-
+    #print("DFS: ",node.children)
    # if len(node.children) >1:
    #     print("char: ", node.char)
    #     return True
@@ -192,7 +233,7 @@ def dfsTrie(node:TrieNode, D: int) -> bool:
                 tfidf = NodeTFIDF(ctf.ndoc, ctf.TF*child.IDF)
                 child.TFIDF.append(tfidf)
 
-            print("node: ", child)
+          #  print("node: ", child)
 
         if dfsTrie(child, D):
             return True
