@@ -28,13 +28,63 @@ class TrieNode(object):
     def __str__(self) -> str:
         return "TrieNode\{ char: %s countDocument:%s TF:%s \nIDF: %s TFIDF: %s\}" % (self.char, self.countDocument, self.TF, self.IDF, self.TFIDF)
 
-    
-    
 class MyTrie:
 
     def __init__(self):
         self.sparseMatrixTF = []
         self.sparseMatrixTFIDF = []
+        self.dictTF = {}
+
+    def add3(self, root, page_id:int, word: str, count: int, ndocs: int):
+        """
+        Adding a word in the trie structure
+        """
+        node = root
+        for char in word:
+            found_in_child = False
+            # Search for the character in the children of the present `node`
+            for child in node.children:
+                if child.char == char:
+                    # We found it, increase the counter by 1 to keep track that another
+                    # word has it as well
+                    child.counter += 1
+                    # And point the node to the child that contains this char
+                    node = child
+                    found_in_child = True
+                    break
+            # We did not find it so add a new chlid
+            if not found_in_child:
+                new_node = TrieNode(char)
+                node.children.append(new_node)
+                # And then point node to the new child
+                node = new_node
+        # Everything finished. Mark it as the end of a word.
+        node.countDocument= node.countDocument+1
+        node.word_finished = True
+
+        td_c, tf_c = calculateTF2(count, ndocs)
+        td_c =  round(td_c, 5)
+        tf_c =  round(tf_c, 5)
+        
+        nodetf = NodeTF(page_id, td_c, tf_c)
+        #nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
+        #print(nodetf)
+        #node.TF.append(nodetf)
+
+        if word in self.dictTF.keys():
+            #self.dictTF[word].append([str(page_id), str(td_c), str(tf_c)])
+            self.dictTF[word].update({str(page_id): [str(td_c), str(tf_c)]})
+            # .update({'item3': 3})
+        else:
+            self.dictTF[word] = {}
+            #self.dictTF[word].append([str(page_id), str(td_c), str(tf_c)])
+            self.dictTF[word].update({str(page_id): [str(td_c), str(tf_c)]})
+        #appendTFdisk(word, node.TF)
+        #node.TF = []
+        #if len(node.TF) > 10000:
+        #    appendTFdisk(word, node.TF)
+        #    node.TF = []
+
 
 class NodeTF:
     def __init__(self, ndoc: int, td: int, TF : float):
@@ -49,7 +99,6 @@ class NodeTF:
     def __hash__(self):
         return hash(self.__repr__())
 
-
 class NodeTFIDF:
     def __init__(self, ndoc: int, tfidf: float ):
         self.ndoc = ndoc
@@ -60,7 +109,6 @@ class NodeTFIDF:
 
     def __hash__(self):
         return hash(self.__repr__())
-
 
 def add(root, word: str):
     """
@@ -88,7 +136,6 @@ def add(root, word: str):
     # Everything finished. Mark it as the end of a word.
     node.countDocument= node.countDocument+1
     node.word_finished = True
-
 
 def calculateTF(word: str, listWords: list) -> Tuple[int, float]:
     t =listWords.count(word)
@@ -137,63 +184,28 @@ def add2(root, page_id:int, word: str, listWords: list):
     node.TF.append(nodetf)
     #appendTFdisk(word, node.TF, nodetf)
 
-
-def add3(root, page_id:int, word: str, count: int, ndocs: int):
-    """
-    Adding a word in the trie structure
-    """
-    node = root
-    for char in word:
-        found_in_child = False
-        # Search for the character in the children of the present `node`
-        for child in node.children:
-            if child.char == char:
-                # We found it, increase the counter by 1 to keep track that another
-                # word has it as well
-                child.counter += 1
-                # And point the node to the child that contains this char
-                node = child
-                found_in_child = True
-                break
-        # We did not find it so add a new chlid
-        if not found_in_child:
-            new_node = TrieNode(char)
-            node.children.append(new_node)
-            # And then point node to the new child
-            node = new_node
-    # Everything finished. Mark it as the end of a word.
-    node.countDocument= node.countDocument+1
-    node.word_finished = True
-
-    td_c, tf_c = calculateTF2(count, ndocs)
-    nodetf = NodeTF(page_id, td_c, tf_c)
-    #nodeTF = {"ndoc":page_id,"td": td_c, "TF": tf_c}
-    #print(nodetf)
-    node.TF.append(nodetf)
-    #appendTFdisk(word, node.TF, nodetf)
-
-
-def appendTFdisk(word, listNodeTF, nodeTF):    
-    listNodeTF.append(nodeTF)
-    path_node = "C:/Users/rjru/OneDrive/Documentos/GitHub/NLP/listindisk/"
-    if len(listNodeTF) > 10:
-        print("Procediendo a guardar...")
-        if os.path.exists(path_node + word + '.csv'):
-            f = open(path_node + word + '.csv', 'a')
-            writer = csv.writer(f)
-            for ntf in listNodeTF:
-                writer.writerow([str(ntf["ndoc"]), str(ntf["td"]), str(ntf["TF"])])
-            f.close()
-            listNodeTF = []
-        else:
-            f = open(path_node + word + '.csv', 'w')
-            writer = csv.writer(f)
-            for ntf in listNodeTF:
-                writer.writerow([str(ntf["ndoc"]), str(ntf["td"]), str(ntf["TF"])])
-            f.close()
-            listNodeTF = []
-
-
+def appendTFdisk(word, listNodeTF):    
+    path_node = "C:/Users/rjru/OneDrive/Documentos/wiki_proyect/listindisk/"
+    #print("Procediendo a guardar...")
+    if os.path.exists(path_node + word + '.csv'):
+        f = open(path_node + word + '.csv', 'a')
+        writer = csv.writer(f, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+        temList = []
+        for ntf in listNodeTF:
+            temList.append([str(ntf.ndoc), str(ntf.td), str(ntf.TF)])
+        writer.writerows(temList)
+        f.close()
+    else:
+        f = open(path_node + word + '.csv', 'w')
+        writer = csv.writer(f, delimiter=' ', quotechar='|', quoting=csv.QUOTE_MINIMAL, lineterminator='\n')
+        #for ntf in listNodeTF:
+        #    writer.writerow([str(ntf.ndoc), str(ntf.td), str(ntf.TF)])
+        #writer.writerows(listNodeTF)
+        temList = []
+        for ntf in listNodeTF:
+            temList.append([str(ntf.ndoc), str(ntf.td), str(ntf.TF)])
+        writer.writerows(temList)
+        f.close()
 
 
 
@@ -254,8 +266,6 @@ def searchMatchin(listTFIDF: list) -> list:
 
     #print("Result: " ,listResult)
     return list(set(listResult))
-
-
 
 def searchQuery(root: TrieNode, query: str) -> str:
 
