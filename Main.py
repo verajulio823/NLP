@@ -15,7 +15,6 @@ def main():
     root = TrieNode('*')
     myTrie = MyTrie()
 
-
     general_path = "C:/Users/rjru/OneDrive/Documentos/wiki_proyect/"
     index_bd_file = pd.read_csv(general_path + "indice.csv") 
 
@@ -38,13 +37,13 @@ def main():
         
             print("Fin Doc: ", page_id, end="\r")
 
-        print("Fin BATCH")
+        print("Fin BATCH: ", os.path.splitext(fn)[0])
 
         t1_stop = process_time()
         print("Elapsed time:", t1_stop, t1_start)
 
         print("save myTrie.dictTF")
-        with open('C:/Users/rjru/OneDrive/Documentos/wiki_proyect/dicttf/'+os.path.splitext(fn)[0]+".p", 'wb') as fp:
+        with open(general_path+"dicttf/"+os.path.splitext(fn)[0]+".p", 'wb') as fp:
             pickle.dump(myTrie.dictTF, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
         myTrie.dictTF = {}
