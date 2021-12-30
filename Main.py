@@ -15,12 +15,8 @@ def main():
     root = TrieNode('*')
     myTrie = MyTrie()
 
-<<<<<<< HEAD
     general_path = "C:/Users/rjru/OneDrive/Documentos/wiki_proyect/"
     index_bd_file = pd.read_csv(general_path + "indice_light.csv") 
-=======
-    flagProcessing = True
->>>>>>> 89680080e2e03b2679a123cafff27ddac9e2a90e
 
     if flagProcessing ==False:
         general_path = "C:/Users/veraj/Documents/Workspace/Python/NLP/"
@@ -39,7 +35,6 @@ def main():
                 title = doc.title
                 index_files=index_files+1
 
-<<<<<<< HEAD
         #print("save myTrie.dictTF")
         #with open(general_path+"dicttf/"+os.path.splitext(fn)[0]+".p", 'wb') as fp:
         #    pickle.dump(myTrie.dictTF, fp, protocol=pickle.HIGHEST_PROTOCOL)
@@ -48,15 +43,6 @@ def main():
     print("save myTrie")
     with open("C:/Users/rjru/OneDrive/Documentos/wiki_proyect/trieLight.p", 'wb') as fp:
         pickle.dump(root, fp, protocol=pickle.HIGHEST_PROTOCOL)
-=======
-                document = document.replace("'", "\"")
-                jdoc = json.loads(document)
-
-                for word in jdoc:
-                    myTrie.add3(root, page_id, word, jdoc[word], len(jdoc))
-            
-                print("Fin Doc: ", page_id, end="\r")
->>>>>>> 89680080e2e03b2679a123cafff27ddac9e2a90e
 
             print("Fin BATCH: ", os.path.splitext(fn)[0])
 
