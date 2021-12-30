@@ -16,7 +16,7 @@ def main():
     myTrie = MyTrie()
 
     general_path = "C:/Users/rjru/OneDrive/Documentos/wiki_proyect/"
-    index_bd_file = pd.read_csv(general_path + "indice.csv") 
+    index_bd_file = pd.read_csv(general_path + "indice_light.csv") 
 
     for fn in index_bd_file["filename"]: # leemos el batch de documentos.
         
@@ -42,11 +42,14 @@ def main():
         t1_stop = process_time()
         print("Elapsed time:", t1_stop, t1_start)
 
-        print("save myTrie.dictTF")
-        with open(general_path+"dicttf/"+os.path.splitext(fn)[0]+".p", 'wb') as fp:
-            pickle.dump(myTrie.dictTF, fp, protocol=pickle.HIGHEST_PROTOCOL)
+        #print("save myTrie.dictTF")
+        #with open(general_path+"dicttf/"+os.path.splitext(fn)[0]+".p", 'wb') as fp:
+        #    pickle.dump(myTrie.dictTF, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
-        myTrie.dictTF = {}
+        #myTrie.dictTF = {}
+    print("save myTrie")
+    with open("C:/Users/rjru/OneDrive/Documentos/wiki_proyect/trieLight.p", 'wb') as fp:
+        pickle.dump(root, fp, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 """""

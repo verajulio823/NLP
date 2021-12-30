@@ -71,6 +71,7 @@ class MyTrie:
         #print(nodetf)
         #node.TF.append(nodetf)
 
+        '''
         if word in self.dictTF.keys():
             #self.dictTF[word].append([str(page_id), str(td_c), str(tf_c)])
             self.dictTF[word].update({str(page_id): [str(td_c), str(tf_c)]})
@@ -84,6 +85,7 @@ class MyTrie:
         #if len(node.TF) > 10000:
         #    appendTFdisk(word, node.TF)
         #    node.TF = []
+        '''
 
 
 class NodeTF:
