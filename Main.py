@@ -59,6 +59,7 @@ def main():
 
     #print(index_files)    
     #print(Trie.dfsTrie(root,249867))
+    print("*********recommendation*********")
     print(Trie.searchQuery(trieRoot, "elektriska monumental"))
 
 

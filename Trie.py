@@ -148,25 +148,28 @@ def dfsTrie(node:TrieNode, D: int) -> bool:
 def searchMatchin(listTFIDF: list) -> list:
     listResult=[]
     size=0 
-    if len(listTFIDF[0]) >10:
-        size=10
-    else:
-        size= len(listTFIDF[0])    
+  
+
     for i in range(len(listTFIDF)):
        for key in listTFIDF[i]:
             for i_c in range(len(listTFIDF)):
                 for key_c in listTFIDF[i_c]:
-                   print(key, " ***** ", key_c)
-                   if i!=i_c:
-                       listResult.append(listTFIDF[i])
+                   if i!=i_c and key == key_c:
+                        listResult.append(NodeTFIDF(key,listTFIDF[i][key]))
 
-                      # if  listTFIDF[i][j].ndoc ==listTFIDF[i_c][j_c].ndoc:
-                      #     listResult.append(listTFIDF[i][j])
-   # for ltfidf in listTFIDF:
-   #     for n in range(0,size):
-   #         listResult.append(ltfidf[n])
 
-    #print("Result: " ,listResult)
+    for ltfidf in listTFIDF:        
+        size =0
+        if len(ltfidf) >10:
+            size= 10
+        else:
+            size = len(ltfidf)
+        i=0
+        for key in ltfidf:
+            if i<size:
+                listResult.append(NodeTFIDF(key, ltfidf[key]))
+                i=i+1
+
     return list(set(listResult))
 
 def searchQuery(root: TrieNode, query: str) -> str:
@@ -191,12 +194,13 @@ def searchQuery(root: TrieNode, query: str) -> str:
                 return ""
         if node.word_finished:
             # Si termina en palabra cargamos sus valores de TF*IDF
-            with open("alphabetic/" +word[0].upper() +".p", 'rb') as fp:
+            with open("sorted/" +word[0].upper() +".p", 'rb') as fp:
                 data = pickle.load(fp) 
             listTFIDF.append(data[word])
 
     
-   # print("LIST RESULT: ", listTFIDF)
+    print("LIST RESULT 0: ", listTFIDF[0])
+    print("LIST RESULT 1: ", listTFIDF[1])
     return searchMatchin(listTFIDF)
 
 def find_prefix(root, prefix: str) -> Tuple[bool, int]:
